@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>閱讀進度示範</title>
+  <style>
+    body { font-family: Arial; line-height: 1.8; padding: 40px; }
+    .chapter { margin-bottom: 100px; }
+    .read { color: gray; }
+    .unread { font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h1>閱讀內容</h1>
+
+<div class="chapter" id="c1">
+  <h2>第一章</h2>
+  <p>這是第一章內容。</p>
+</div>
+
+<div class="chapter" id="c2">
+  <h2>第二章</h2>
+  <p>這是第二章內容。</p>
+</div>
+
+<div class="chapter" id="c3">
+  <h2>第三章</h2>
+  <p>這是第三章內容。</p>
+</div>
+
+<script>
+  const chapters = document.querySelectorAll(".chapter");
+
+  // 讀取已讀紀錄
+  let read = JSON.parse(localStorage.getItem("readChapters")) || [];
+
+  chapters.forEach(ch => {
+    if (read.includes(ch.id)) {
+      ch.classList.add("read");
+    } else {
+      ch.classList.add("unread");
+    }
+  });
+
+  // 記錄滾動時的閱讀進度
+  window.addEventListener("scroll", () => {
+    chapters.forEach(ch => {
+      const rect = ch.getBoundingClientRect();
+      if (rect.top < 200 && !read.includes(ch.id)) {
+        read.push(ch.id);
+        localStorage.setItem("readChapters", JSON.stringify(read));
+        localStorage.setItem("lastRead", ch.id);
+      }
+    });
+  });
+
+  // 回到上次閱讀位置
+  const last = localStorage.getItem("lastRead");
+  if (last) {
+    document.getElementById(last).scrollIntoView();
+  }
+</script>
+
+</body>
+</html>
